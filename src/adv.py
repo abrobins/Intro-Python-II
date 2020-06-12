@@ -1,7 +1,7 @@
 from room import Room
 
 from player import Player
-
+from item import Item
 import textwrap
 
 # Declare all the rooms
@@ -56,19 +56,10 @@ room['treasure'].s_to = room['narrow']
 # If the user enters "q", quit the game.
 
 
-def compass(player, direction):
-    attr = direction + '_to'
+player = Player("Blair", room["outside"])
 
-    if hasattr(player.location, attr):
-        player.location = getattr(player.location, attr)
-    else:
-        print("You can't go that direction")
+room["foyer"].items = ["machete", "sword"]
 
-
-player = Player(room["outside"])
-
-
-user_playing = True
 
 while True:
     #
@@ -76,27 +67,48 @@ while True:
     # * Prints the current description (the textwrap module might be useful here).
     print("\n")
     print(player.location)
-    # * Waits for user input and decides what to do.
     user_input = input(
-        "\nEnter (n), (s), (e), (w) or (q) to: ").lower()
-    if user_input[0] == 'q':
-        break
-    #
-    # If the user enters a cardinal direction, attempt to move to the room there.
-    # Print an error message if the movement isn't allowed.
-    # User can enter 'north', 'south', 'east', 'west', or just allow them to
-    # enter 'n', 's', 'e', 'w' in order to move
-    # strip off everything but the first char
+        "\nEnter (n), (s), (e), (w), (d), (i) for inventory, (take [item]), (drop [item]) or (q) to quit: ").split()
+    if len(user_input) == 1:
 
-    if user_input[0] == 'n':
-        # move to the north
-        compass(player, user_input[0])
-    elif user_input[0] == 's':
-        # move to the south
-        compass(player, user_input[0])
-    elif user_input[0] == 'e':
-        # move to the east
-        compass(player, user_input[0])
-    elif user_input[0] == 'w':
-        # move to the west
-        compass(player, user_input[0])
+        if user_input[0] == 'q':
+            print("Thanks for playing. We hope to see you again soon!")
+            break
+
+        if user_input[0] == 'n':
+
+            # move to the north
+            player.move(user_input[0])
+        if user_input[0] == 's':
+            # move to the south
+            player.move(user_input[0])
+        if user_input[0] == 'e':
+            # move to the east
+            player.move(user_input[0])
+        if user_input[0] == 'w':
+            # move to the west
+            player.move(user_input[0])
+        elif user_input[0] == 'i':
+            player.print_inv()
+
+    elif len(user_input) == 2:
+        if user_input[0] == "take" or user_input[0] == "get":
+            for item in player.location.items:
+                if item == user_input[1]:
+                    player.inventory.append(item)
+                    player.location.items.remove(item)
+                    print(f"You have picked up {item}")
+                else:
+                    print("No such item in this room")
+        elif user_input[0] == "drop":
+            for item in player.inventory:
+                if item == user_input[1]:
+                    player.drop_item(user_input[1])
+                    print(f"You have dropped {item}")
+                else:
+                    print(
+                        f"{player.name} doesn't have that item in their inventory - Sorry!")
+        else:
+            print("Invalid user entry enter drop or get followed by the item name")
+    else:
+        print("Invalid user entry")
