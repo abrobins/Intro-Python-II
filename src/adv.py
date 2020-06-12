@@ -68,7 +68,7 @@ while True:
     print("\n")
     print(player.location)
     user_input = input(
-        "\nEnter (n), (s), (e), (w), (d), (i) for inventory, (take [item]), (drop [item]) or (q) to quit: ").split()
+        "\nEnter (n), (s), (e), (w), (d), (i) for inventory, (take [item]), (drop [item]), (add [item]) or (q) to quit: ").split()
     if len(user_input) == 1:
 
         if user_input[0] == 'q':
@@ -108,6 +108,9 @@ while True:
                 else:
                     print(
                         f"{player.name} doesn't have that item in their inventory - Sorry!")
+        elif user_input[0] == "add":
+            player.location.items.append(user_input[1])
+
         else:
             print("Invalid user entry enter drop or get followed by the item name")
     else:
